@@ -1,3 +1,10 @@
+/*
+ ESP STOCK TICKER
+ CREATED BY BILLUPS TILLMAN
+ https://github.com/BeeTillman
+ FOR INSTRUCTIONS ON HOW TO USE,
+ NAVIGATE TO THE README
+*/
 
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
@@ -6,57 +13,51 @@
 #include "lcd_functions.h"
 #include "keys.h"
 
-
-
 #define TEST_HOST "www.finnhub.io"
 #define ssid ssidKey // Network SSID (Defined in keys header)
 #define password passwordKey  // Network Password (Defined in keys header)
 #define TEST_HOST_FINGERPRINT fingerprintKey   // Chrome fingerprint (Defined in keys header)
 #define apikey apiKey // Finnhub.io API Key (Defined in keys header)
 
+#define SYMBOL1 "FIVN" // You can add as many symbol as you want. Simply copy the line, increment SYMBOL#, and add a getData function followed by a delay in the loop
+#define SYMBOL2 "AMZN"
+#define SYMBOL3 "NVDA"
+#define SYMBOL4 "AAPL"
+
+#define stockRotationDelay 25000 // Delay between switching of stock ticker display
+
 WiFiClientSecure client;
-
-  // This is almost certainly your display's i2c address, but worth checking if you're having issues
-
 
 void setup() {
   Serial.begin(112500); //esp8266 default baud rate
-  displayInitialStartup();
-  client.setInsecure();
+  displayInitialStartup(); // Display welcome screen
+  client.setInsecure(); // Resolves wifi error due to bad port
 }
 
 void loop() {
-  //Connect To WiFi
-  connectToWiFi(); // I have it connect to WiFi every few calls just in case the connection gets interrupted. 
-                    // Connecting and disconnecting more than required isn't going to cause any problems; better safe than sorry
-                    
-  getData("FIVN");
-  delay(25000);
-  getData("AMZN");
-  delay(25000);
-  getData("NVDA");
-  delay(25000);
-  getData("AAPL");
-  delay(25000);
+  connectToWiFi(); // Periodically Reconnect to WiFi. This will display the "Reconnecting" notice.           
+  getData(SYMBOL1); // Display Ticker for input symbol
+  delay(stockRotationDelay); // Delay between stocks
+  getData(SYMBOL2);
+  delay(stockRotationDelay);
+  getData(SYMBOL3);
+  delay(stockRotationDelay);
+  getData(SYMBOL4);
+  delay(stockRotationDelay);
 }
 
 void getData(String ticker){
-  // Don't ask me how any of this code works. I have no idea
     Serial.println("Making a HTTP Request");
-  // Opening connection to server (Use 80 as port if HTTP)
-  if (!client.connect(TEST_HOST, 443))
+  if (!client.connect(TEST_HOST, 443)) // Opening connection to server (Use 80 as port if HTTP)
   {
     Serial.println(F("Connection failed"));
   }
 
-  // give the esp a breather
-  yield();
+  yield(); // Give the ESP8266 a break
 
-  // Send HTTP request
-  client.print(F("GET "));
-  // This is the second half of a request (everything that comes after the base URL)
-  // API KEY GOES HERE
-  client.print("/api/v1/quote?symbol="+ticker+"&token="+apikey); // %2C == ,
+  client.print(F("GET ")); // Send HTTP request
+  
+  client.print("/api/v1/quote?symbol="+ticker+"&token="+apikey); // This is the second half of a request (everything that comes after the base URL)
   client.println(F(" HTTP/1.1"));
 
   //Headers
@@ -69,7 +70,7 @@ void getData(String ticker){
   {
     Serial.println(F("Failed to send request"));
   }
-  //delay(100);
+
   // Check HTTP status
   char status[32] = {0};
   client.readBytesUntil('\r', status, sizeof(status));
@@ -138,13 +139,13 @@ void connectToWiFi(){
     Serial.println("");
     Serial.println("Awaiting WiFi Connection.");
     Serial.println("Update Environment Variables if Necessary");
-    displayReconnectingCycle();
+    displayReconnectingCycle(); // Display reconnecting notice on LCD1602
     delay(1000);
   }
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
-  displayWifiSuccess();
+  displayWifiSuccess(); // Display wifi connection success on LCD1602
   delay(1000);
   IPAddress ip = WiFi.localIP();
   Serial.println(ip);
