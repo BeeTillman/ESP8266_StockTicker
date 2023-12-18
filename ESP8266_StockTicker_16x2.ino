@@ -140,13 +140,13 @@ void connectToWiFi(){
     Serial.println("");
     Serial.println("Awaiting WiFi Connection.");
     Serial.println("Update Environment Variables if Necessary");
-    displayReconnectingCycle(); // Display reconnecting notice on LCD1602
+    displayReconnectingCycle(); // Display reconnecting notice on LCD
     delay(1000);
   }
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
-  displayWifiSuccess(); // Display wifi connection success on LCD1602
+  displayWifiSuccess(); // Display wifi connection success on LCD
   delay(1000);
   IPAddress ip = WiFi.localIP();
   Serial.println(ip);

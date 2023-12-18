@@ -83,8 +83,7 @@ void displayInitialStartup(){
 }
 
 void displayStockResult(String ticker, float float_pchange, String currentPrice){
-    lcd.clear();
-    lcd.setCursor(0,0);
+    clearResetLCD()
     if(lcd2004) printBorders();
     if (float_pchange < 0){
       lcd.write(6);
