@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 
+void initLCD();
+
 void createCustomChars();
 
 void displayInitialStartup();
@@ -14,5 +16,7 @@ void clearResetLCD();
 void displayReconnectingCycle();
 
 void displayWifiSuccess();
+
+void printBorders();
 
 #endif

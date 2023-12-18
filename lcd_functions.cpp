@@ -1,83 +1,18 @@
 #include "lcd_functions.h"
+#include "customChars.h"
 
-byte check[8] = {
-  B00000,
-  B00001,
-  B00011,
-  B10110,
-  B11100,
-  B01000,
-  B00000,
-  B00000
-};
+#define introDelay 6500 // The delay between the intro sequence and the Initial wifi connection
 
-byte downArrow[8] = {
-  B00000,
-  B00100,
-  B00100,
-  B00100,
-  B11111,
-  B01110,
-  B00100,
-  B00000
-};
-
-byte upArrow[8] = {
-  B00000,
-  B00100,
-  B01110,
-  B11111,
-  B00100,
-  B00100,
-  B00100,
-  B00000
-};
-
-byte loadingOne[8] = {
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00000,
-  B00100,
-  B01110,
-  B11111
-};
-
-byte loadingTwo[8] = {
-  B00000,
-  B00000,
-  B00100,
-  B01110,
-  B11111,
-  B11111,
-  B00000,
-  B00000
-};
-
-byte funkyChar[8] = {
-  B10010,
-  B01100,
-  B01100,
-  B10010,
-  B01001,
-  B00110,
-  B00110,
-  B01001
-};
-
-byte newDollar[8] = {
-  B00100,
-  B11111,
-  B10100,
-  B11111,
-  B00101,
-  B11111,
-  B00100,
-  B00000
-};
+bool lcd2004 = true; // If you are using a 16x2, set this to false.
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void initLCD(){
+if(lcd2004){
+  lcd = LiquidCrystal_I2C(0x27, 20, 4);
+}
+}
+
 
 void createCustomChars(){
   lcd.createChar(0, loadingOne);
@@ -87,6 +22,7 @@ void createCustomChars(){
   lcd.createChar(4, downArrow);
   lcd.createChar(5, funkyChar);
   lcd.createChar(6, newDollar);
+  lcd.createChar(7, borderTB);
 }
 
 void displayInitialStartup(){
@@ -96,13 +32,42 @@ void displayInitialStartup(){
   lcd.setCursor(0,0);
   lcd.write(' ');
   lcd.write(' ');
+  if(lcd2004){
+    lcd.write(' ');
+    lcd.write(' ');
+  }
   lcd.write(5);
-  lcd.print(" Welcome ");
+  if(lcd2004){
+    lcd.print(" Welcome! ");
+  }
+  else{
+    lcd.print(" Welcome ");
+  }
   lcd.write(5);
   delay(2000);
   lcd.setCursor(0,1);
+  if(lcd2004){
+    lcd.write(' ');
+    lcd.write(' ');
+  }
   lcd.print("ESP Stock Ticker");
-  delay(6000);
+  delay(3000);
+  if(lcd2004){
+    lcd.setCursor(0,2);
+    lcd.write(' ');
+    lcd.write(' ');
+    lcd.write(' ');
+    lcd.write(5);
+    lcd.print(" Created By ");
+    lcd.write(5);
+    delay(1500);
+    lcd.setCursor(0,3);
+    lcd.write(' ');
+    lcd.write(' ');
+    lcd.write(2);
+    lcd.print("Billups Tillman");
+  }
+  else{
   lcd.clear();
   delay(1000);
   lcd.setCursor(0,0);
@@ -113,20 +78,22 @@ void displayInitialStartup(){
   delay(2500);
   lcd.setCursor(0,1);
   lcd.print("Billups Tillman");
-  delay(6500);
+  }
+  delay(introDelay);
 }
 
 void displayStockResult(String ticker, float float_pchange, String currentPrice){
     lcd.clear();
     lcd.setCursor(0,0);
+    if(lcd2004) printBorders();
     if (float_pchange < 0){
       lcd.write(6);
       lcd.print(ticker + " ");
       lcd.write(4);
       lcd.write(' ');
       lcd.print(String(float_pchange) + "%");
-      //lcd.print("$" + ticker + " | " + float_pchange + "%");
-      lcd.setCursor(0,1);
+      if(lcd2004) lcd.setCursor(0,2);
+      else lcd.setCursor(0,1);
       lcd.write(6);
       lcd.print(String(currentPrice));
     }else{
@@ -135,8 +102,8 @@ void displayStockResult(String ticker, float float_pchange, String currentPrice)
       lcd.write(3);
       lcd.write(' ');
       lcd.print(String(float_pchange) + "%");
-      //lcd.print("$" + ticker + " | +" + float_pchange + "%");
-      lcd.setCursor(0,1);
+      if(lcd2004) lcd.setCursor(0,2);
+      else lcd.setCursor(0,1);
       lcd.write(6);
       lcd.print(String(currentPrice));
     }
@@ -147,10 +114,47 @@ void clearResetLCD(){
   lcd.setCursor(0, 0);
 }
 
+void printBorders(){
+  lcd.setCursor(0,0);
+  for(int i = 0; i <= 20; i++){
+    lcd.write(7);
+  }
+  lcd.setCursor(0,3);
+  for(int i = 0; i <= 20; i++){
+    lcd.write(7);
+  }
+  lcd.setCursor(0,1);
+}
 void displayReconnectingCycle(){
     clearResetLCD();
+    if(lcd2004){
+      printBorders();
+      lcd.write(' ');
+      lcd.write(' ');
+    }
     lcd.print("Reconnecting...");
     lcd.setCursor(0, 1);
+    if(lcd2004){
+      lcd.setCursor(0, 2);
+      int sent = 0;
+      while (sent < 20){
+        lcd.write(0);
+        delay(300);
+        sent++;
+      }
+      sent = 0;
+      while (sent < 19){
+        if (sent != 0){
+          lcd.setCursor(sent-1, 2);
+          lcd.write(0);
+        }
+      lcd.setCursor(sent+1, 2);
+      lcd.write(1);
+      delay(450);
+      sent++;
+      }  
+    }
+    else{
     int sent = 0;
     while (sent < 15){
       lcd.write(0);
@@ -168,12 +172,23 @@ void displayReconnectingCycle(){
       delay(450);
       sent++;
     }
+    }
 }
 
 void displayWifiSuccess(){
   clearResetLCD();
+  if(lcd2004){
+    printBorders();
+    lcd.write(' ');
+    lcd.write(' ');
+  }
   lcd.print("WiFi Connected!");
-  lcd.setCursor(0, 1);
+  if(lcd2004){
+    lcd.setCursor(0,2);
+    lcd.write(' ');
+    lcd.write(' ');
+  } 
+  else lcd.setCursor(0,1);
   int sent = 15;
   while (sent > 0){
     lcd.write(2);

@@ -29,6 +29,7 @@
 WiFiClientSecure client;
 
 void setup() {
+  initLCD();
   Serial.begin(112500); //esp8266 default baud rate
   displayInitialStartup(); // Display welcome screen
   client.setInsecure(); // Resolves wifi error due to bad port
