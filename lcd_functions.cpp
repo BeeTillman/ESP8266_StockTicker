@@ -1,15 +1,21 @@
+#include "HardwareSerial.h"
 #include "lcd_functions.h"
 #include "customChars.h"
 
 #define introDelay 6500 // The delay between the intro sequence and the Initial wifi connection
 
-bool lcd2004 = true; // If you are using a 16x2, set this to false.
+bool lcd2004 = false; // If you are using a 16x2, set this to false.
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void initLCD(){
 if(lcd2004){
   lcd = LiquidCrystal_I2C(0x27, 20, 4);
+  Serial.println("LCD Setting = 20x4.");
+}
+else{
+  lcd = LiquidCrystal_I2C(0x27, 16, 2);
+  Serial.println("LCD Setting = 16x2.");
 }
 }
 
@@ -26,6 +32,7 @@ void createCustomChars(){
 }
 
 void displayInitialStartup(){
+  Serial.println("Init LCD Start.");
   lcd.init();
   lcd.backlight();
   createCustomChars();
@@ -80,10 +87,11 @@ void displayInitialStartup(){
   lcd.print("Billups Tillman");
   }
   delay(introDelay);
+  Serial.println("Init LCD Complete.");
 }
 
 void displayStockResult(String ticker, float float_pchange, String currentPrice){
-    clearResetLCD()
+    clearResetLCD();
     if(lcd2004) printBorders();
     if (float_pchange < 0){
       lcd.write(6);
