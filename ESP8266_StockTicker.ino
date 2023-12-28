@@ -106,22 +106,22 @@ void getData(String ticker){
     // byte and print to the serial monitor
     // This is kind of unnecessary but I added the for loop
     // to limit API calls that return huge amounts of data
-    String peppapig = ""; // don't make fun of my variable declaration
+    String apiResult = ""; // don't make fun of my variable declaration
     for (int i=0; i<600; i++){
       if (client.available()) {
         char c = 0;
         client.readBytes(&c, 1);
         Serial.print(c);
-        peppapig+=c;
+        apiResult+=c;
         }
     }
 
-    // We now have a String called peppapig, which contains the first 
+    // We now have a String called apiResult, which contains the first 
     // 600 characters that were returned from our API call. 
-    // We now throw peppapig into a JSON document so we can index it.
-    Serial.println(peppapig);
+    // We now throw apiResult into a JSON document so we can index it.
+    Serial.println(apiResult);
     DynamicJsonDocument doc(1024);
-    deserializeJson(doc, peppapig);
+    deserializeJson(doc, apiResult);
     JsonObject obj = doc.as<JsonObject>();
   
     String currentPrice = obj["c"].as<String>();
