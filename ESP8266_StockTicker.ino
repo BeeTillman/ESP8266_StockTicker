@@ -106,7 +106,7 @@ void getData(String ticker){
     // byte and print to the serial monitor
     // This is kind of unnecessary but I added the for loop
     // to limit API calls that return huge amounts of data
-    String apiResult = ""; // don't make fun of my variable declaration
+    String apiResult = "";
     for (int i=0; i<600; i++){
       if (client.available()) {
         char c = 0;
