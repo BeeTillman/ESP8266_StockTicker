@@ -133,6 +133,7 @@ void getData(String ticker){
 
 
 void connectToWiFi(){
+  if (WiFi.status() != WL_CONNECTED) {
  // Attempt to connect to Wifi network:
   Serial.print("Connecting Wifi: ");
   Serial.println(ssid);
@@ -152,4 +153,8 @@ void connectToWiFi(){
   IPAddress ip = WiFi.localIP();
   Serial.println(ip);
   client.setFingerprint(TEST_HOST_FINGERPRINT);
+  }
+  else {
+    Serial.println("Network Test Successful.");
+  }
 }
