@@ -1,4 +1,6 @@
-# ESP Stock Ticker
+# ESP8266 Stock Ticker
+
+![Demo Image](/images/Demo.png)
 
 - [Major Components](#major-components)
     - [Hardware](#hardware)
@@ -13,6 +15,7 @@
 - [Contributing](#contributing)
 - [Contact](#contact)
 - [Acknowledgements](#acknowledgements)
+
 
 This project is a stock ticker display using ESP8266. It fetches stock data from Finnhub.io and displays it on an LCD screen (Either 1602 or 2004). The ticker symbols are customizable, and the display rotates through the selected stocks at a configurable interval.
 
