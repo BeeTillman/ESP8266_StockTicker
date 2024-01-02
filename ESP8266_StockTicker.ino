@@ -23,8 +23,9 @@
 #define SYMBOL2 "AMZN"
 #define SYMBOL3 "NVDA"
 #define SYMBOL4 "AAPL"
+#define SYMBOL5 "TSLA"
 
-#define stockRotationDelay 25000 // Delay between switching of stock ticker display
+#define stockRotationDelay 17500 // Delay between switching of stock ticker display
 
 WiFiClientSecure client;
 
@@ -45,6 +46,8 @@ void loop() {
   getData(SYMBOL3);
   delay(stockRotationDelay);
   getData(SYMBOL4);
+  delay(stockRotationDelay);
+  getData(SYMBOL5);
   delay(stockRotationDelay);
 }
 

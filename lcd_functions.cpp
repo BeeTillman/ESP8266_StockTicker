@@ -139,7 +139,7 @@ void displayReconnectingCycle(){
       lcd.write(' ');
       lcd.write(' ');
     }
-    lcd.print("Reconnecting...");
+    lcd.print("Connecting...");
     lcd.setCursor(0, 1);
     if(lcd2004){
       lcd.setCursor(0, 2);
